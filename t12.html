@@ -278,6 +278,26 @@ function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){}
 
 let cur = null; // {mi, qi, answers:[], picked}
 const app = document.getElementById("app");
+/* ===== Envoi des résultats au professeur (Google Sheets) ===== */
+const ADRESSE_TABLEAU = "https://script.google.com/macros/s/AKfycbymdyxGTwKUs5fB0Zrx-vDM8FwlNEBL8ENU7SJPU-kUU6y5b2aq3T6Mi1oQ_ER45Zd4aQ/exec";
+const CLE_TABLEAU = "melec-greta", SEANCE = "T12", QKEY = KEY + "-envoi";
+function fileEnvoi(){ try { return JSON.parse(localStorage.getItem(QKEY)) || []; } catch(e){ return []; } }
+function majEnvoi(t){ let el = document.getElementById("envoi"); const pn = app.querySelector(".panel");
+  if (!el && pn) { el = document.createElement("p"); el.id = "envoi"; el.className = "muted"; el.style.cssText = "margin:0;font-size:.85em"; pn.appendChild(el); }
+  if (el) el.textContent = t; }
+function viderFile(){ const q = fileEnvoi(); if (!q.length || ADRESSE_TABLEAU.indexOf("http") !== 0) return; const d = q[0];
+  fetch(ADRESSE_TABLEAU, {method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(d)})
+  .then(() => { const r = fileEnvoi().filter(x => x.id !== d.id); try { localStorage.setItem(QKEY, JSON.stringify(r)); } catch(e){} majEnvoi("✓ Résultat transmis au professeur."); if (r.length) viderFile(); })
+  .catch(() => majEnvoi("Résultat non transmis (pas de réseau) : il sera renvoyé à la prochaine ouverture de la page.")); }
+let _essais = JSON.stringify(st.res);
+const _save0 = save;
+save = function(){ _save0(); const avant = JSON.parse(_essais); _essais = JSON.stringify(st.res);
+  MISSIONS.forEach((m, i) => { const r = st.res[m.id], a = avant[m.id];
+    if (r && (!a || r.essais > a.essais)) { const q = fileEnvoi();
+      q.push({id: Date.now() + "-" + i, cle: CLE_TABLEAU, seance: SEANCE, prenom: st.prenom, mission: i + 1, titre: m.titre, score: r.s, sur: r.n, essai: r.essais});
+      try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch(e){} setTimeout(() => { majEnvoi("Envoi du résultat…"); viderFile(); }, 0); } }); };
+window.addEventListener("load", viderFile);
+/* ===== fin de l'envoi des résultats ===== */  
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
 const total = MISSIONS.reduce((n,m)=>n+m.items.length,0);
