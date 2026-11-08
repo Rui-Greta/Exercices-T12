@@ -239,6 +239,7 @@ function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){}
 
 let cur = null; // {mi, qi, answers:[], picked}
 const app = document.getElementById("app");
+const ADRESSE_TABLEAU = "https://script.google.com/macros/s/AKfycbymdyxGTwKUs5fB0Zrx-vDM8FwlNEBL8ENU7SJPU-kUU6y5b2aq3T6Mi1oQ_ER45Zd4aQ/exec";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
 const total = MISSIONS.reduce((n,m)=>n+m.items.length,0);
