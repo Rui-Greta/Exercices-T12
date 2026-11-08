@@ -241,7 +241,7 @@ let cur = null; // {mi, qi, answers:[], picked}
 const app = document.getElementById("app");
 /* ===== Envoi des résultats au professeur (Google Sheets) ===== */
 const ADRESSE_TABLEAU = "https://script.google.com/macros/s/AKfycbymdyxGTwKUs5fB0Zrx-vDM8FwlNEBL8ENU7SJPU-kUU6y5b2aq3T6Mi1oQ_ER45Zd4aQ/exec";
-const CLE_TABLEAU = "melec-greta", SEANCE = "T12", QKEY = KEY + "-envoi";
+const CLE_TABLEAU = "melec-greta", SEANCE = "T01", QKEY = KEY + "-envoi";
 function fileEnvoi(){ try { return JSON.parse(localStorage.getItem(QKEY)) || []; } catch(e){ return []; } }
 function majEnvoi(t){ let el = document.getElementById("envoi"); const pn = app.querySelector(".panel");
   if (!el && pn) { el = document.createElement("p"); el.id = "envoi"; el.className = "muted"; el.style.cssText = "margin:0;font-size:.85em"; pn.appendChild(el); }
